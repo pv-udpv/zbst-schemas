@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.zbst.io/opendirect/account.schema.json",
+  "title": "OpenDirect Account",
+  "description": "OpenDirect v2.1 Account: Buyer ↔ Advertiser relationship per Publisher",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique Account ID",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "advertiserid": {
+      "type": "string",
+      "description": "Organization acting as Advertiser"
+    },
+    "buyerid": {
+      "type": "string",
+      "description": "Organization placing orders (may be agency or DSP)"
+    },
+    "publisherid": {
+      "type": "string",
+      "description": "Organization as Publisher (implicit in many cases)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Pending", "Approved", "Live", "Inactive"],
+      "default": "Pending",
+      "description": "Account approval status"
+    },
+    "name": {
+      "type": "string",
+      "description": "Account display name"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Account creation timestamp"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last modification timestamp"
+    }
+  },
+  "required": ["id", "advertiserid", "buyerid", "status"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "acc_ivi_wavemaker_alphabank",
+      "advertiserid": "org_alphabank",
+      "buyerid": "org_wavemaker",
+      "publisherid": "org_ivi",
+      "status": "Live",
+      "name": "AlphaBank @ IVI via Wavemaker",
+      "created": "2025-01-01T00:00:00Z"
+    }
+  ]
+}

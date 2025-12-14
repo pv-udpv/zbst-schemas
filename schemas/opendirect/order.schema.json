@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.zbst.io/opendirect/order.schema.json",
+  "title": "OpenDirect Order",
+  "description": "OpenDirect v2.1 Order: Guaranteed inventory reservation with lines and creatives",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique Order ID",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "accountid": {
+      "type": "string",
+      "description": "Parent Account ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Order name (e.g., 'AlphaBank Q1 2025')"
+    },
+    "advertiserid": {
+      "type": "string",
+      "description": "Advertiser Organization ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Draft", "PendingReservation", "Reserved", "PendingBooking", "Booked", "InFlight", "Finished", "Cancelled"],
+      "default": "Draft"
+    },
+    "startdate": {
+      "type": "string",
+      "format": "date",
+      "description": "Order start date (YYYY-MM-DD)"
+    },
+    "enddate": {
+      "type": "string",
+      "format": "date",
+      "description": "Order end date (YYYY-MM-DD), must be >= startdate"
+    },
+    "lines": {
+      "type": "array",
+      "description": "Array of line items (targeting, quantity, rate)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "productid": { "type": "string", "description": "Inventory package ID" },
+          "startdate": { "type": "string", "format": "date" },
+          "enddate": { "type": "string", "format": "date" },
+          "ratetype": { "type": "string", "enum": ["CPM", "CPC", "CPA", "Flat"], "default": "CPM" },
+          "rate": { "type": "number", "minimum": 0, "description": "Rate in USD" },
+          "qty": { "type": "integer", "minimum": 0, "description": "Quantity (impressions for CPM)" }
+        },
+        "required": ["id", "productid", "ratetype", "rate", "qty"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["id", "accountid", "name", "startdate", "enddate", "lines"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "ord_alphabank_q1_2025",
+      "accountid": "acc_ivi_wavemaker_alphabank",
+      "name": "AlphaBank Q1 2025",
+      "advertiserid": "org_alphabank",
+      "status": "Booked",
+      "startdate": "2025-01-01",
+      "enddate": "2025-03-31",
+      "lines": [
+        {
+          "id": "line_preroll_30",
+          "name": "Pre-roll 30sec",
+          "productid": "prod_ivi_preroll_30sec",
+          "startdate": "2025-01-01",
+          "enddate": "2025-03-31",
+          "ratetype": "CPM",
+          "rate": 5.00,
+          "qty": 1000000
+        }
+      ]
+    }
+  ]
+}

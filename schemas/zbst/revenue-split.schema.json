@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.zbst.io/zbst/revenue-split.schema.json",
+  "title": "Revenue Split Calculation",
+  "description": "zbst-tech revenue split rules: Publisher % + Exchange % = 100%%",
+  "type": "object",
+  "properties": {
+    "total_revenue_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total revenue (impressions / 1000) * CPM"
+    },
+    "publisher_share_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Publisher revenue share %%"
+    },
+    "exchange_fee_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Exchange fee %% (100 - publisher_share)"
+    },
+    "publisher_revenue_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Publisher gets this amount"
+    },
+    "exchange_revenue_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Exchange gets this amount"
+    },
+    "dsp_cost_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "DSP/advertiser cost = total_revenue (for open auctions)"
+    },
+    "deal_type": {
+      "type": "string",
+      "enum": ["PG", "PD", "RTB"],
+      "description": "PG/PD=guaranteed, RTB=open auction"
+    },
+    "impressions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cpm_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "CPM or winning bid price"
+    }
+  },
+  "required": ["total_revenue_usd", "publisher_share_percent", "exchange_fee_percent", "publisher_revenue_usd", "exchange_revenue_usd"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "total_revenue_usd": 5000.00,
+      "publisher_share_percent": 80,
+      "exchange_fee_percent": 20,
+      "publisher_revenue_usd": 4000.00,
+      "exchange_revenue_usd": 1000.00,
+      "dsp_cost_usd": 5000.00,
+      "deal_type": "PG",
+      "impressions": 1000000,
+      "cpm_usd": 5.00
+    }
+  ]
+}

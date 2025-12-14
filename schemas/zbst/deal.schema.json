@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.zbst.io/zbst/deal.schema.json",
+  "title": "zbst-tech Deal",
+  "description": "zbst-tech Deal: Internal representation of OpenDirect Order with validation constraints",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Unique zbst deal ID (e.g., deal_pub_buyer_order)",
+      "pattern": "^deal_[a-z0-9_-]+$"
+    },
+    "opendirect_order_id": {
+      "type": "string",
+      "description": "Linked OpenDirect Order ID (for traceability)"
+    },
+    "publisher_id": {
+      "type": "string",
+      "description": "Publisher Organization ID"
+    },
+    "buyer_representative_id": {
+      "type": "string",
+      "description": "Buyer Organization ID (Buyer acting on behalf of Advertiser)"
+    },
+    "advertiser_id": {
+      "type": "string",
+      "description": "Advertiser Organization ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["SETUP", "ACTIVE", "PAUSED", "COMPLETED", "CANCELLED"],
+      "default": "SETUP",
+      "description": "Deal lifecycle status"
+    },
+    "deal_type": {
+      "type": "string",
+      "enum": ["PG", "PD"],
+      "default": "PG",
+      "description": "PG=Preferred, PD=Programmatic Direct (guaranteed)"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "lines": {
+      "type": "array",
+      "description": "Deal lines with guaranteed inventory",
+      "items": {
+        "type": "object",
+        "properties": {
+          "opendirect_line_id": { "type": "string" },
+          "product_id": { "type": "string" },
+          "start_date": { "type": "string", "format": "date" },
+          "end_date": { "type": "string", "format": "date" },
+          "total_guaranteed": { "type": "integer", "minimum": 0, "description": "Total impressions" },
+          "delivered": { "type": "integer", "minimum": 0, "default": 0 },
+          "rate_cpm": { "type": "number", "minimum": 0, "description": "CPM in USD" },
+          "ad_durations_sec": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "description": "Allowed durations (6, 15, 30, 60)" },
+          "allowed_devices": { "type": "array", "items": { "type": "string", "enum": ["smart_tv", "mobile", "tablet", "desktop"] }, "minItems": 1 },
+          "allowed_placements": { "type": "array", "items": { "type": "string", "enum": ["pre-roll", "mid-roll", "post-roll", "pause"] }, "minItems": 1 }
+        },
+        "required": ["opendirect_line_id", "product_id", "total_guaranteed", "rate_cpm", "ad_durations_sec", "allowed_devices", "allowed_placements"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "revenue_share_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Publisher revenue share %% (rest goes to exchange)"
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": ["VALID", "INVALID", "PENDING_REVIEW"],
+      "default": "PENDING_REVIEW",
+      "description": "Deal ↔ Publisher profile compatibility"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["deal_id", "publisher_id", "buyer_representative_id", "advertiser_id", "start_date", "end_date", "lines", "revenue_share_percent"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "deal_id": "deal_pub_ivi_buyer_wavemaker_ord_123",
+      "opendirect_order_id": "ord_alphabank_q1_2025",
+      "publisher_id": "org_ivi",
+      "buyer_representative_id": "org_wavemaker",
+      "advertiser_id": "org_alphabank",
+      "status": "ACTIVE",
+      "deal_type": "PG",
+      "start_date": "2025-01-01",
+      "end_date": "2025-03-31",
+      "lines": [
+        {
+          "opendirect_line_id": "line_preroll_30",
+          "product_id": "prod_ivi_preroll_30sec",
+          "start_date": "2025-01-01",
+          "end_date": "2025-03-31",
+          "total_guaranteed": 1000000,
+          "delivered": 250000,
+          "rate_cpm": 5.00,
+          "ad_durations_sec": [30],
+          "allowed_devices": ["smart_tv", "mobile"],
+          "allowed_placements": ["pre-roll"]
+        }
+      ],
+      "revenue_share_percent": 80,
+      "validation_status": "VALID"
+    }
+  ]
+}
